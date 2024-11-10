@@ -1,0 +1,39 @@
+astroid==2.4.2 # static code analysis, code inspection
+attrs==20.3.0 # automatic generation of the main features of the class
+cycler==0.10.0 # creates cycles of configurations
+eli5==0.11.0 # clear explanation of complex ML models
+flake8==3.8.4 # coding standards + quality
+graphviz==0.16 # graphs, duh
+importlib-metadata==3.4.0 # access metadata of the installed packages
+isort==5.7.0 # sort and organize imports in Python files
+Jinja2==2.11.3 # templating engine, for HTML
+joblib==1.0.1 # lightweight pipelining in ML and handling of large arrays of data
+kiwisolver==1.3.1 # solving systems of linear equations for graphical applications, mostly
+lazy-object-proxy==1.4.3 # makes actuall objects not created until they are actually needed
+MarkupSafe==1.1.1 # safe handling of strings that may contain markup, such as HTML or XML
+matplotlib==3.3.4 # embedding plots in applications
+mccabe==0.6.1 # provides a simple utility for checking the cyclomatic complexity of code
+mlxtend==0.18.0 # extension of the ML
+mypy==0.800 # helps developers catch type-related errors before runtime
+mypy-extensions==0.4.3 # extensions of mypy, duh
+numpy==1.20.1 # numerical and linear algebra computing
+pandas==1.2.2 # dataframes
+Pillow==8.1.0 # provides extensive capabilities for opening, manipulating, and saving various image file formats (PIL)
+pycodestyle==2.6.0 # checks Python code against the style conventions
+pyflakes==2.2.0 # checks for various errors in Python programs
+pylint==2.6.0 # helps developers identify programming errors, enforce coding standards, and improve code quality
+pyparsing==2.4.7 # constructing and executing grammars for text parsing in Python
+python-dateutil==2.8.1 # additional functionality for datetime library for manipulating dates and times
+pytz==2021.1 # accurate and up-to-date timezone definitions
+scikit-learn==0.24.1 # main ML library
+scipy==1.6.0 # scientific computing
+six==1.15.0 # utilities for writing a code for both Python 2 and 3 versions
+tabulate==0.8.7 # display tabular data in convinient way
+threadpoolctl==2.1.0 # provides a way to control the number of threads used by various libraries that leverage thread pools for parallelism, such as NumPy, SciPy, and others
+toml==0.10.2 # parsing and writing TOML (Tom's Obvious, Minimal Language -- serialization language) files
+tqdm==4.56.2 # provides a fast, extensible progress bar for loops and other iterable tasks
+typed-ast==1.4.2 # parse Python source code into an abstract syntax tree (AST) that includes type annotations
+typing-extensions==3.7.4.3 # latest type hinting featres for developers
+wrapt==1.12.1 # wrap and decorate functions, methods, objects in a consistant way
+xgboost==1.3.3 # high performance gradient boosting (XGBoost Modelling)
+zipp==3.4.0 # easy manipulation of paths in ZIP

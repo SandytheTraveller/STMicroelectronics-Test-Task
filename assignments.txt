@@ -1,0 +1,78 @@
+## Context overview
+A regression problem is a problem where we want to identify the relationship between a set of independent variables X and a dependent variable Y,
+for example to predict new value of Y on the basis of the values of X.
+Different type of relationships and consequently different methods to be computed them can be used to solve this type of problems, such as statistical methods,
+ machine learning methods, neural networks. Typically, which is the best method to be used depends on the considered data and it is not known a-priori. 
+ To allow the user the exploration of different techniques with different hyper-parameters, a-MLLibrary was developed.
+The aim of the library is to identify the best combination of technique and hyper-parameter to build the regressor for a particular problem.
+
+## Library overview
+The library supports:
+
+- preprocessing of data (e.g., feature selection, normalization, etc.)
+- different regression techniques (e.g., linear regression, machine learning, etc.)
+- complex validation techniques (e.g,, hold-out, cross-validation, multiple runs, extrapolation, etc.)
+
+The workflow implemented in the library is the following:
+
+1. The end-user provides the "receipt" of the experiments to be performed.
+2. The library build the sets of experiments to be run.
+3. The library runs (in parallel) all the experiments.
+4. The library evaluate the results of the experiments and select the best regressor.
+
+The receipt consists of a text configuration file where the user can specify:
+
+- input data
+- X columns and Y column
+- preprocessing to be applied
+- techniques to be analyzed and corresponding hyper-parameters to be analyzed; the possible values for each hyper-parameters are described by lists:
+  the library builds a different experiment for each possible combination of hyperparameter.
+- validation technique to be used
+
+Examples of receipts can be found in _example_configuration_
+On the basis of the receipt, the library build and run a set of experiments. An experiment is the combination of:
+
+- input data
+- technique
+- hyper-parameters
+
+Your assignment consists of adding a limited support to regression through neural networks inside the library.
+Note that you are not required to design/develop networks to solve a particular regression problem.
+In details you have to:
+
+1. Modify _test.py_ adding a parameter to allow the user select the subset of tests to be run through a comma separated list.
+2. Add the support of regression with neural network; in the first support network (not trained) is provided as file in the configuration file;
+   the network is assumed to have the correct number of inputs. Pickle dump and read should be disabled for regressors based on neural networks.
+3. Add the support to explore number of epochs and batch-size through the configuration file.
+4. Add the support to specify network topology in the configuration file.
+   **The only allowed topology is a sequence of fully_connected/dense layer** interleaved with non-linear activations.
+   See the [_notes_][1] for further details.
+5. Enable pickle dump and load of regressors based on neural networks through the serialization of the byte content of
+   the models saved on file using the deep learning framework.
+
+Some further technical details:
+
+- Library is written in python 3.x.
+- Library has been tested in python 3.7 under linux (Debian and Ubuntu); requirements for this version of python are listed in requirements.txt.
+  Nevertheless, there is not any particular constraint with respect to particular version of the library and there is not any known limitation 
+  in combination of different python 3.x versions nor of different version of packages.
+- Library is based on object programming.
+- A test script (_test.py_) is included in the library. **Take into account that it can take several minutes to complete**.
+- All the code base is compliant with a set of coding style rules which are checked through linting programs (mypy, pylint, flake8). 
+  Configuration files for linters as well as script to verify compliance of the code with the rules are part of the library distribution.
+  **All the added code should adhere to the same rules**.
+- **All the added code should be documented with the same level of details of existing code**.
+- You must avoid use of print function: you have to **use logging infrastructure** already available in the library.
+- You will have mainly to focus on class ExperimentConfiguration (and its derived subclasses) which implements the description of a particular experiment.
+- Support to neural network must be based on one among the following framework: **keras, tensorflow, pytorch**.
+- About point 2: you have to build a model by hand to be used as example. A single fully connected layer is enough.
+
+### Notes about topology of neural network
+
+[1]: The user should be able to specify through configuration file:
+
+- the depth of the network, i.e., the number of pairs fully_connected/dense - activation.
+- the width (i.e., number of units) of each layer but the last one (last layer always has 1 unit). User can specify the width of only the initial layers of the network. 
+  In this case, last specified value has to be used for the following layers. Even in this case layer has still just one unit.
+- the sequence activation to be used in the sequence of layers. If the sequence of activations is shorter than the number of layer, 
+  the sequence must be replicated.
