@@ -1,0 +1,6 @@
+      Evaluate experiments (sequentially)
+<--
+   Printing results for run 0
+         Best result for Technique.LR_RIDGE - Configuration is ['alpha_0.1'] - (Training MAPE is 0.010679 - HP Selection MAPE is 0.010679) - Validation MAPE is 0.010679
+   Overall best result is ['LRRidge', 'alpha_0.1'] ((0.4742023485030141*x1) + (0.9990609790804543*x2) + (0.47420234850298576*x3) + (0.0675781803881123*x4_class_0) + (0.029703459986098756*x4_class_b) + (-0.0972816403742068*x4_class_a) + (-0.06153553420482861*inverse_x1) + (0.00884107598894076*inverse_x2) + (-0.061535534204847996*inverse_x3) + (0.27134363745395884)) - (Training MAPE is 0.010679 - HP Selection MAPE is 0.010679) - Validation MAPE is 0.010679
+   Run 0 - Technique LRRidge - Conf ['alpha_0.1'] - Training MAPE 0.010679 - Test MAPE 0.010679

@@ -344,6 +344,7 @@ class ExperimentConfiguration(abc.ABC):
             temp_d['_logger'] = temp_d['_logger'].name
         return temp_d
 
+
     def __setstate__(self, temp_d):
         """
         Auxilixiary function used by pickle. Ovverriden to avoid problems with logger lock

@@ -1,9 +1,14 @@
 import io
 import logging
 import os
+import tempfile
+
 import tensorflow as tf
 import keras
+from keras.saving.saving_api import load_model
+
 import model_building.experiment_configuration as ec
+
 
 class NeuralNetworkExperimentConfiguration(ec.ExperimentConfiguration):
     """
@@ -14,15 +19,29 @@ class NeuralNetworkExperimentConfiguration(ec.ExperimentConfiguration):
     _compute_signature()
         Compute the signature (i.e., a unique identifier) of this experiment
 
+    get_regressor()
+        Initialize the neural network model based on the hyperparameters
+
+    build_model()
+        Build a new neural network model based on the experiment's hyperparameters
+
     _train()
         Performs the actual building of the neural network model
 
     compute_estimations()
         Compute the predicted values for a given set of data
 
-    create_regressor()
-        Initializes the neural network model based on the hyperparameters
+    save_model()
+        Save the model separately in Keras format
 
+    load_model()
+        Load the model from the saved file
+
+    __getstate__()
+        Customize the serialization process for the neural network
+
+    __setstate__()
+        Customize the deserialization process for the neural network
     """
 
     def __init__(self, campaign_configuration, hyperparameters, regression_inputs, prefix):
@@ -46,7 +65,17 @@ class NeuralNetworkExperimentConfiguration(ec.ExperimentConfiguration):
         self.backend = campaign_configuration['General'].get('keras_backend', 'tensorflow')
         self.use_cpu = campaign_configuration['General'].get('keras_use_cpu', False)
         self.model_file = "model.h5"  # Path to save the model
-        self._regressor = self.get_regressor()  # This will store the neural network model
+
+
+        if self.model_file and os.path.exists(self.model_file):
+            self._regressor = tf.keras.models.load_model(self.model_file)
+            self._logger.debug(f"Loaded model from {self.model_file}")
+        else:
+            self.build_model()
+            self._regressor = self.get_regressor()
+
+
+    # This will store the neural network model
 
     def _compute_signature(self, prefix):
         """
@@ -85,11 +114,18 @@ class NeuralNetworkExperimentConfiguration(ec.ExperimentConfiguration):
             os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
         logging.getLogger('tensorflow').setLevel(logging.ERROR)
+
+        # Check if model already exists
         if os.path.exists(self.model_file):
             self._regressor = tf.keras.models.load_model(self.model_file)
             self._logger.debug(f"Loaded model from {self.model_file}")
         else:
+            # Build a new model if no file exists
             self.build_model()
+
+        if self._regressor is None:
+            raise ValueError("Model could not be initialized correctly.")
+
         return self._regressor
 
     def build_model(self):
@@ -112,14 +148,22 @@ class NeuralNetworkExperimentConfiguration(ec.ExperimentConfiguration):
         # Output layer
         layers.append(keras.layers.Dense(1))
 
-        # Compile the model
+        # Create the Sequential model
         self._regressor = keras.Sequential(layers)
+
+        # Compile the model
         self._regressor.compile(
             loss=self._hyperparameters['loss'],
             optimizer=self._hyperparameters['optimizer'],
             metrics=[keras.metrics.RootMeanSquaredError()]
         )
+
+        # Set learning rate
         self._regressor.optimizer.learning_rate.assign(self._hyperparameters['learning_rate'])
+
+        # Save model path after build
+        if self._regressor:
+            self._logger.debug("Model successfully built.")
 
     def _train(self):
         """
@@ -158,28 +202,24 @@ class NeuralNetworkExperimentConfiguration(ec.ExperimentConfiguration):
         predictions = self._regressor.predict(xdata, verbose=0)
         return predictions
 
-    def __getstate__(self):
-        """
-        Auxiliary function used by pickle. Overridden to avoid problems with logger lock.
-        """
-        state = self.__dict__.copy()
-        if '_logger' in state:
-            del state['_logger']
-        if '_regressor' in state and state['_regressor']:
-            byte_io = io.BytesIO()
-            self._regressor.save(byte_io, save_format='h5')
-            byte_io.seek(0)
-            state['_regressor'] = byte_io.read()
+    def save_model(self, filepath):
+        """Save the model separately in Keras format."""
+        self._regressor.save(filepath)
 
+    def load_model(self, filepath):
+        """Load the model from the saved file."""
+        self._regressor = load_model(filepath)
+
+    def __getstate__(self):
+        """Customize the serialization process for the neural network."""
+        state = self.__dict__.copy()  # Copy the object’s state
+        model_path = os.path.join(tempfile.gettempdir(), "model.h5")
+        state['model_path'] = model_path
+        self.save_model(model_path)  # Save the model to a file
+        del state['_regressor']  # Remove the model from the state, as it will be saved separately
         return state
 
     def __setstate__(self, state):
-        """
-        Auxiliary function used by pickle. Overridden to avoid problems with logger lock.
-        """
-        self._logger = logging.getLogger(__name__)
-        if '_regressor' in state and state['_regressor']:
-            byte_io = io.BytesIO(state['_regressor'])
-            byte_io.seek(0)
-            self._regressor = tf.keras.models.load_model(byte_io)
-        self.__dict__.update(state)
+        """Customize the deserialization process for the neural network."""
+        self.__dict__.update(state)  # Restore the object’s state
+        self.load_model(self.__dict__['model_path'])  # Load the model from the saved file

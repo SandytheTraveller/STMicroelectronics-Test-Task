@@ -14,18 +14,20 @@ Task 2:
     -
 
 Task 3:
-    - added support to explore number of epochs and batch-size through the configuration file,
+    - added support to explore number of epochs and batch-size through the configuration file
+    - added new hyperparameters for the Neural Network
 
 
 Task 4:
     - added support for the topology specification,
     i.e. added support for depth, width, activation functions of the neural network, specified by the user
-    -
+    - added new hyperparameters for the NN, which are added to the signature in the _compute_signature() and
+    are used to build the model in the build_model() method
 
 Task 5:
     - Instead of dumping the entire model object using pickle, I should save it to a file (as a byte stream) using the respective deep learning framework's
     serialization method, and then dump the file contents using pickle
     - When loading the model, I first load the byte content from the pickle file, then restore the model using keras' load methos
     - worked with _get-state_ and _set_state_ methods for serialization (in the neural_network_experiment_configuration file)
-    - The model is saved in HDF5 format using the Keras-provided save method.
-    - The load_model method ensures that the model is only loaded if the file exists. If the file is missing, it raises a FileNotFoundError.
+    - Had to fix the code in the method process() in the sequence_data_processing.py, otherwise
+    there was an Error and the regressor did not initialize properly
