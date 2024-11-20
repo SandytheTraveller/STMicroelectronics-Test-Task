@@ -83,11 +83,11 @@ class DecisionTreeExperimentConfiguration(ec.ExperimentConfiguration):
         """
         Build the model with the experiment configuration represented by this object
         """
-        self._logger.debug("Building model for %s", self._signature)
+        self._logger.info("Building model for %s", self._signature)
         assert self._regression_inputs
         xdata, ydata = self._regression_inputs.get_xy_data(self._regression_inputs.inputs_split["training"])
         self._regressor.fit(xdata, ydata)
-        self._logger.debug("Model built")
+        self._logger.info("Model built")
 
         # for idx, col_name in enumerate(self._regression_inputs.x_columns):
         #    self._logger.debug("The coefficient for %s is %f", col_name, self._linear_regression.coef_[idx])

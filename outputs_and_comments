@@ -11,7 +11,7 @@ Task 2:
     - used Keras for creating Neural Network
     - added new technique for Neural Network into enumeration in _experiment_configuration_.py
     - creation of the model happens in the build_model() method
-    -
+    - overriden _getstate_ and _setstate_ methods
 
 Task 3:
     - added support to explore number of epochs and batch-size through the configuration file
@@ -27,7 +27,9 @@ Task 4:
 Task 5:
     - Instead of dumping the entire model object using pickle, I should save it to a file (as a byte stream) using the respective deep learning framework's
     serialization method, and then dump the file contents using pickle
-    - When loading the model, I first load the byte content from the pickle file, then restore the model using keras' load methos
+    - When loading the model, I first load the byte content from the pickle file, then restore the model using keras' load methods
     - worked with _get-state_ and _set_state_ methods for serialization (in the neural_network_experiment_configuration file)
-    - Had to fix the code in the method process() in the sequence_data_processing.py, otherwise
-    there was an Error and the regressor did not initialize properly
+    - there was a problem with serialisation, it was not working (at least I suspect it wasn't) for any configuration; I suspect that overridden method in the base
+    class was not called as it should have. So, I added new parameter for the constructor of the Regressor. Thus, the Regressor actually gets the configuration object as it should
+    and the _getstate_, _setstate_ methods are being called for sure.
+

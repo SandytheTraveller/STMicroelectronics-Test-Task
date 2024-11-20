@@ -29,6 +29,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 # pylint: disable=wrong-import-position
 import custom_logger  # noqa: E402
+import regressor
 
 
 class Technique(Enum):
@@ -173,7 +174,10 @@ class ExperimentConfiguration(abc.ABC):
         # Import here to avoid problems with circular dependencies
         # pylint: disable=import-outside-toplevel
         import model_building.sfs_experiment_configuration
-        if isinstance(self, model_building.sfs_experiment_configuration.SFSExperimentConfiguration) or 'FeatureSelection' not in self._campaign_configuration or 'method' not in self._campaign_configuration['FeatureSelection'] or self._campaign_configuration['FeatureSelection']['method'] != "SFS":
+        if isinstance(self,
+                      model_building.sfs_experiment_configuration.SFSExperimentConfiguration) or 'FeatureSelection' not in self._campaign_configuration or 'method' not in \
+                self._campaign_configuration['FeatureSelection'] or self._campaign_configuration['FeatureSelection'][
+            'method'] != "SFS":
             assert not os.path.exists(self._experiment_directory), self._experiment_directory
             os.makedirs(self._experiment_directory)
 
@@ -278,6 +282,9 @@ class ExperimentConfiguration(abc.ABC):
 
         self._stop_file_logger()
 
+    def is_wrapper(self):
+        return hasattr(self, '_wrapped_experiment_configuration')
+
     @abc.abstractmethod
     def _compute_signature(self, prefix):
         """
@@ -343,7 +350,6 @@ class ExperimentConfiguration(abc.ABC):
         if '_logger' in temp_d:
             temp_d['_logger'] = temp_d['_logger'].name
         return temp_d
-
 
     def __setstate__(self, temp_d):
         """

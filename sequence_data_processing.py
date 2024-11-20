@@ -294,25 +294,23 @@ class SequenceDataProcessing:
             real_y = check_data[self._campaign_configuration['General']['y']].values
             check_data = check_data.drop(columns=[self._campaign_configuration['General']['y']])
             for technique in self._campaign_configuration['General']['techniques']:
-                # My fix
-                # modified code, which inspects the regressor and ensures it supports the predict() method
                 pickle_file_name = os.path.join(self._campaign_configuration['General']['output'],
                                                 technique + ".pickle")
                 pickle_file = open(pickle_file_name, "rb")
                 regressor = pickle.load(pickle_file)
                 pickle_file.close()
-
-                # Check if regressor has the predict method
-                if hasattr(regressor, 'predict'):
-                    self._logger.info(f'Model: {regressor}')
-                    # flatten the output
+                # My code
+                # Added try-except block to catch any potential errors
+                try:
+                    self._logger.info("Starting prediction with regressor %s", regressor)
                     predicted_y = regressor.predict(check_data).flatten()
-                    self._logger.debug("Shape of real_y: %s, Shape of predicted_y: %s", real_y.shape, predicted_y.shape)
-                    difference = real_y - predicted_y
-                    mape = np.mean(np.abs(np.divide(difference, real_y)))
-                    self._logger.info("---MAPE of %s: %s", technique, str(mape))
-                else:
-                    self._logger.error(f"Loaded object does not have a predict method: {regressor}. The object is not an actual regressor.")
+                    # self._logger.info("Prediction completed. Predicted values: %s", predicted_y)
+                except Exception as e:
+                    self._logger.error("Error during prediction: %s", str(e))
+                    raise
+                difference = real_y - predicted_y
+                mape = np.mean(np.abs(np.divide(difference, real_y)))
+                self._logger.info("---MAPE of %s: %s", technique, str(mape))
 
             self._logger.info("<--Performed self check")
 

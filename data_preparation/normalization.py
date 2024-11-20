@@ -16,8 +16,7 @@ limitations under the License.
 """
 
 import numpy
-import sklearn.compose
-import sklearn.preprocessing
+from sklearn.preprocessing import StandardScaler # type: ignore
 
 import data_preparation.data_preparation as dp
 
@@ -78,7 +77,7 @@ class Normalization(dp.DataPreparation):
 
             normalization_support = filtered_data[column].to_numpy()
             normalization_support = numpy.reshape(normalization_support, (-1, 1))
-            data.scalers[column] = sklearn.preprocessing.StandardScaler().fit(normalization_support)
+            data.scalers[column] = StandardScaler().fit(normalization_support)
 
             data_to_be_normalized = data.data[column].to_numpy()
             data_to_be_normalized = numpy.reshape(data_to_be_normalized, (-1, 1))

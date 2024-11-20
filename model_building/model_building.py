@@ -1,3 +1,18 @@
+"""
+Copyright 2019 Marco Lattuada
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 import multiprocessing
 import os
 import pickle
@@ -142,20 +157,15 @@ class ModelBuilding:
             self._logger.info("Validation MAPE on full dataset for %s: %s", technique, str(best_conf.mapes["validation"]))
 
             # Build the regressor
-            best_regressors[technique] = regressor.Regressor(campaign_configuration, best_conf.get_regressor(), best_conf.get_x_columns(), all_data.scalers)
-
+            best_regressors[technique] = regressor.Regressor(campaign_configuration,
+                                                             best_conf,
+                                                             best_conf.get_regressor(),
+                                                             best_conf.get_x_columns(),
+                                                             all_data.scalers)
             pickle_file_name = os.path.join(campaign_configuration['General']['output'], ec.enum_to_configuration_label[technique] + ".pickle")
-            # pickle_file = open(pickle_file_name, "wb")
-            # pickle.dump(best_regressors[technique], pickle_file)
-            # pickle_file.close()
-            with open(pickle_file_name, "wb") as pickle_file:
-                if technique == ec.Technique.NNETWORK:  # Check if the technique is Neural Network
-                    self._logger.info(f"Serializing Neural Network model for technique: {technique}")
-                    pickle.dump(best_conf, pickle_file)  # This will invoke the __getstate__ method for NN models
-                else:
-                    self._logger.info(f"Serializing non-NN model for technique: {technique}")
-                    pickle.dump(best_regressors[technique],
-                                pickle_file)  # Default pickle serialization for non-NN models
+            pickle_file = open(pickle_file_name, "wb")
+            pickle.dump(best_regressors[technique], pickle_file)
+            pickle_file.close()
 
         self._logger.info("<--Built the final regressors")
 

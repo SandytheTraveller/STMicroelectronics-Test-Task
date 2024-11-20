@@ -63,6 +63,7 @@ def main():
 
     # The root directory of the script
     abs_root = os.path.dirname(abs_script)
+    print(abs_root)
 
     logging.basicConfig(level=logging.INFO)
     recursively_check(abs_root)

@@ -54,7 +54,7 @@ class Regressor:
     get_regressor()
         Return the regressor associated with this experiment configuration
     """
-    def __init__(self, campaign_configuration, regressor, x_columns, scalers):
+    def __init__(self, campaign_configuration, configuration, regressor, x_columns, scalers):
         """
         Parameters
         regressor
@@ -62,6 +62,7 @@ class Regressor:
         """
         assert regressor
         self._campaign_configuration = campaign_configuration
+        self.configuration = configuration
         self._regressor = regressor
         self._x_columns = x_columns
         self._scalers = scalers
@@ -76,12 +77,11 @@ class Regressor:
         inputs: pandas.DataFrame
             The input on which prediction has to be applied
         """
-        data = inputs
         inputs_split = {}
         column_names = inputs.columns.values.tolist()
         data = regression_inputs.RegressionInputs(inputs, inputs_split, column_names,
                                                   self._campaign_configuration['General']['y'])
-        self._logger.debug("Created input regression")
+        self._logger.info("Created input regression")
 
         # Adding column renaming if required
         if 'rename_columns' in self._campaign_configuration['DataPreparation']:
@@ -164,5 +164,3 @@ class Regressor:
         Return the internal regressor"
         """
         return self._regressor
-
-

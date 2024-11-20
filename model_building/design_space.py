@@ -880,6 +880,7 @@ class KFoldExpConfsGenerator(SelectionValidationExpConfsGenerator):
             if fold == self._k - 1:
                 fold_testing_idx = remaining
             else:
+                # My fix
                 # sampling from set is not possible, so we transform the set into the list
                 fold_testing_idx = set(self._random_generator.sample(list(remaining), fold_size))
 
